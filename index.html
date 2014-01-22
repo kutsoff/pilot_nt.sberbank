@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Pilot nt.sberbank by kutsoff</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Pilot nt.sberbank</h1>
+        <p>Sberbank pilot_nt.dll wrapper</p>
+
+        <p class="view"><a href="https://github.com/kutsoff/pilot_nt.sberbank">View the Project on GitHub <small>kutsoff/pilot_nt.sberbank</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kutsoff/pilot_nt.sberbank/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kutsoff/pilot_nt.sberbank/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kutsoff/pilot_nt.sberbank">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>**</p>
+
+<h2>
+<a name="sberbank-pilot_ntdll-delphi-wrapper" class="anchor" href="#sberbank-pilot_ntdll-delphi-wrapper"><span class="octicon octicon-link"></span></a>Sberbank pilot_nt.dll DELPHI wrapper</h2>
+
+<p>**</p>
+
+<p>Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.</p>
+
+<p>Usage:</p>
+
+<pre><code>// Пример снятия сверки итогов(закрытие дня)
+
+var
+  PinPad: TPinPad;
+begin
+  try
+  PinPad := TPinPad.Create;
+  if PinPad.TestPinPad then // Проверяем наличие пинпада
+  begin
+    if Pinpad.CloseDay = 0 then
+      ShowMessage(PinPad.Cheque) // Показать сообщение с отчетом
+    else
+      raise Exception.Create('Error!');
+  end;    
+  finally
+    PinPad.Free;
+  end
+  else
+    raise Exception.create('PinPad was not found');
+
+end;
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kutsoff">kutsoff</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
