@@ -1,13 +1,14 @@
-pilot_nt.sberbank
-=================
+<p>**</p>
 
-Sberbank pilot_nt.dll DELPHI wrapper
+<h2 id="sberbank-pilotntdll-delphi-wrapper">Sberbank pilot_nt.dll DELPHI wrapper</h2>
 
-Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.
+<p>**</p>
 
+<p>Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.</p>
 
-Usage:
-// Пример снятия сверки итогов(закрытие дня)
+<p>Usage:</p>
+
+<pre><code>// Пример снятия сверки итогов(закрытие дня)
 
 var
   PinPad: TPinPad;
@@ -25,5 +26,6 @@ begin
     PinPad.Free;
   end
     raise error.create('PinPad was not found');
-  
+
 end;
+</code></pre>
