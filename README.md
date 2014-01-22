@@ -20,12 +20,12 @@ begin
     if Pinpad.CloseDay = 0 then
       ShowMessage(PinPad.Cheque) // Показать сообщение с отчетом
     else
-      raise error.Create('Error!');
+      raise Exception.Create('Error!');
   end;    
   finally
     PinPad.Free;
   end
-    raise error.create('PinPad was not found');
+    raise Exception.create('PinPad was not found');
 
 end;
 </code></pre>
