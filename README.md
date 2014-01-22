@@ -25,6 +25,7 @@ begin
   finally
     PinPad.Free;
   end
+  else
     raise Exception.create('PinPad was not found');
 
 end;
