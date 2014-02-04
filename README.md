@@ -1,12 +1,8 @@
-<p>**</p>
+# Sberbank pilot_nt.dll DELPHI wrapper
 
-<h2 id="sberbank-pilotntdll-delphi-wrapper">Sberbank pilot_nt.dll DELPHI wrapper</h2>
+Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.
 
-<p>**</p>
-
-<p>Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.</p>
-
-<p>Usage:</p>
+## Usage:
 
 <pre><code>// Пример снятия сверки итогов(закрытие дня)
 
