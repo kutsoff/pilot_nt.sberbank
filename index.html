@@ -28,16 +28,16 @@
         </ul>
       </header>
       <section>
-        <p>**</p>
-
-<h2>
-<a name="sberbank-pilot_ntdll-delphi-wrapper" class="anchor" href="#sberbank-pilot_ntdll-delphi-wrapper"><span class="octicon octicon-link"></span></a>Sberbank pilot_nt.dll DELPHI wrapper</h2>
-
-<p>**</p>
+        <h1>
+<a name="sberbank-pilot_ntdll-delphi-wrapper" class="anchor" href="#sberbank-pilot_ntdll-delphi-wrapper"><span class="octicon octicon-link"></span></a>Sberbank pilot_nt.dll DELPHI wrapper</h1>
 
 <p>Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested.</p>
 
-<p>Usage:</p>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage:</h2>
+
+<h3>
+<a name="%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%81%D0%BD%D1%8F%D1%82%D0%B8%D1%8F-%D1%81%D0%B2%D0%B5%D1%80%D0%BA%D0%B8-%D0%B8%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D0%B7%D0%B0%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%B4%D0%BD%D1%8F-example-of-usage-closeday-function" class="anchor" href="#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D1%81%D0%BD%D1%8F%D1%82%D0%B8%D1%8F-%D1%81%D0%B2%D0%B5%D1%80%D0%BA%D0%B8-%D0%B8%D1%82%D0%BE%D0%B3%D0%BE%D0%B2%D0%B7%D0%B0%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%B4%D0%BD%D1%8F-example-of-usage-closeday-function"><span class="octicon octicon-link"></span></a>Пример снятия сверки итогов(закрытие дня). Example of usage CloseDay function</h3>
 
 <pre><code>// Пример снятия сверки итогов(закрытие дня)
 
@@ -45,20 +45,53 @@ var
   PinPad: TPinPad;
 begin
   try
-  PinPad := TPinPad.Create;
-  if PinPad.TestPinPad then // Проверяем наличие пинпада
-  begin
-    if Pinpad.CloseDay = 0 then
-      ShowMessage(PinPad.Cheque) // Показать сообщение с отчетом
+    PinPad := TPinPad.Create;
+    if PinPad.TestPinPad then // Проверяем наличие пинпада
+    begin
+      if Pinpad.CloseDay = 0 then
+        ShowMessage(PinPad.Cheque) // Показать сообщение с отчетом
+      else
+        raise Exception.Create('Error!');
+    end
     else
-      raise Exception.Create('Error!');
-  end;    
+      raise Exception.create('PinPad was not found');
+  finally
+    PinPad.Free;
+  end;
+
+end;
+</code></pre>
+
+<h3>
+<a name="%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%8B-%D0%BF%D0%BE-%D0%BA%D0%B0%D1%80%D1%82%D0%B5-example-of-payment-usage" class="anchor" href="#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%BF%D1%80%D0%BE%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%8B-%D0%BF%D0%BE-%D0%BA%D0%B0%D1%80%D1%82%D0%B5-example-of-payment-usage"><span class="octicon octicon-link"></span></a>Пример проведения оплаты по карте. Example of payment usage</h3>
+
+<p></p><pre><code> // Пример проведения оплаты по карте на сумму 100 руб 20 коп
+var
+  PinPad: TPinPad;
+  ok: boolean;
+begin
+  try
+    PinPad := TPinPad.Create;
+    OK  := PinPad.CardAuth7(100.2, sberPayment) = 0;  // Авторизация карты
+    if OK then
+    begin
+      OK := PinPad.SuspendTrx = 0;                    // Если оплата прошла cтавим транзакцию на паузу
+        if OK then
+          begin
+            // Здесь мы можем печатать чек на ККМ, записать в БД или еще что-нибудь
+            // если все прошло успешно (чек записан в ККМ, например)
+            PinPad.CommitTrx;                         // фиксируем транзакцию
+            ShowMessage(PinPad.Cheque);               // и выводим сообщение с чеком-ответом от банка
+          end
+          else
+          begin
+            PinPad.RollBackTrx;                       // иначе отменяем транзакцию
+            ShowMessage('Не удалось совершить оплату');
+          end;
+    end;
   finally
     PinPad.Free;
   end
-  else
-    raise Exception.create('PinPad was not found');
-
 end;
 </code></pre>
       </section>
