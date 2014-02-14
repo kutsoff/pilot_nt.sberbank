@@ -4,7 +4,7 @@ Made for Delphi 2010 or higher (Unicode). Maybe it works in 2009, but not tested
 
 ## Usage:
 
-### Пример снятия сверки итогов(закрытие дня)
+### Пример снятия сверки итогов(закрытие дня). Example of usage CloseDay function
 
 <pre><code>// Пример снятия сверки итогов(закрытие дня)
 
@@ -29,7 +29,7 @@ begin
 end;
 </code></pre>
 
-### Пример проведения оплаты по карте
+### Пример проведения оплаты по карте. Example of payment usage
 
 <pre><code> // Пример проведения оплаты по карте на сумму 100 руб 20 коп
 var
