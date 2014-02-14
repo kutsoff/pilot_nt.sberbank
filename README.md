@@ -41,10 +41,12 @@ begin
     OK  := PinPad.CardAuth7(100.2, sberPayment) = 0;  // Авторизация карты
     if OK then
     begin
-      OK := PinPad.SuspendTrx = 0;                    // Ставим транзакцию на паузу
+      OK := PinPad.SuspendTrx = 0;                    // Если оплата прошла cтавим транзакцию на паузу
         if OK then
           begin
-            PinPad.CommitTrx;                         // Если оплата прошла, фиксируем транзакцию
+            // Здесь мы можем печатать чек на ККМ, записать в БД или еще что-нибудь
+            // если все прошло успешно (чек записан в ККМ, например)
+            PinPad.CommitTrx;                         // фиксируем транзакцию
             ShowMessage(PinPad.Cheque);               // и выводим сообщение с чеком-ответом от банка
           end
           else
