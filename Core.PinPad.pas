@@ -77,7 +77,8 @@ type
     // OUT хеш SHA1 от номера карты в формате ASCIIZ
   end;
 
-  TOperationType = (sberPayment = 1, sberReturn = 3, sberCloseDay = 7);
+  TOperationType = (sberPayment = 1, sberReturn = 3, sberCloseDay = 7,
+    sberShift = 9);
 
   TCardAuthorize9 = function(track2: Pchar; auth_ans: PAuthAnswer9)
     : integer; cdecl;
@@ -174,6 +175,8 @@ type
     Функция сверяет переданные извне параметры (сумму и код авторизации) со значениями в последней успешной операции, которая была проведена через библиотеку. Если хотя бы один параметр не совпадает, функция возвращает код ошибки 4140 и не выполняет никаких действий.
   }
 
+  TServiceMenu = function(): integer; cdecl;
+
   TPinPad = class
     strict private
       FAuthAnswer: TAuthAnswer;
@@ -187,15 +190,16 @@ type
     public
       constructor create;
       destructor destroy;
-      function CardAuth(Summ: Currency; Operation: TOperationType): integer;
-      function CardAuth7(Summ: Currency; Operation: TOperationType): integer;
-      function CardAuth9(Summ: Currency; Operation: TOperationType): integer;
+      function CardAuth(Summ: Double; Operation: TOperationType): integer;
+      function CardAuth7(Summ: Double; Operation: TOperationType): integer;
+      function CardAuth9(Summ: Double; Operation: TOperationType): integer;
       function TestPinPad: boolean;
       function ReadTrack2: string;
       function CloseDay: integer;
       function SuspendTrx: integer;
       function CommitTrx: integer;
       function RollBackTrx: integer;
+      function ServiceMenu: integer;
       property AuthAnswer: TAuthAnswer read FAuthAnswer;
       property AuthAnswer7: TAuthAnswer7 read FAuthAnswer7;
       property AuthAnswer9: TAuthAnswer9 read FAuthAnswer9;
@@ -210,7 +214,7 @@ implementation
 
 { TPinPad }
 
-function TPinPad.CardAuth(Summ: Currency; Operation: TOperationType): integer;
+function TPinPad.CardAuth(Summ: Double; Operation: TOperationType): integer;
 var
   H: THandle;
   Func: TCardAuthorize;
@@ -226,7 +230,7 @@ begin
   try
     @Func := GetProcAddress(H, Pchar('_card_authorize'));
 
-    Result   := Func(Pchar(''), @FAuthAnswer);
+    Result   := Func(nil, @FAuthAnswer);
     FCheque  := PAnsiChar(FAuthAnswer.Check);
     FRCode   := AnsiString(FAuthAnswer.Rcode);
     FMessage := AnsiString(FAuthAnswer.AMessage);
@@ -236,7 +240,7 @@ begin
   end;
 end;
 
-function TPinPad.CardAuth7(Summ: Currency; Operation: TOperationType): integer;
+function TPinPad.CardAuth7(Summ: Double; Operation: TOperationType): integer;
 var
   H: THandle;
   Func: TCardAuthorize7;
@@ -254,7 +258,7 @@ begin
   try
     @Func := GetProcAddress(H, Pchar('_card_authorize7'));
 
-    Result := Func(Pchar(''), @FAuthAnswer7);
+    Result := Func(nil, @FAuthAnswer7);
 
     FCheque   := PAnsiChar(FAuthAnswer7.AuthAnswer.Check);
     FRCode    := AnsiString(FAuthAnswer7.AuthAnswer.Rcode);
@@ -266,7 +270,7 @@ begin
   end;
 end;
 
-function TPinPad.CardAuth9(Summ: Currency; Operation: TOperationType): integer;
+function TPinPad.CardAuth9(Summ: Double; Operation: TOperationType): integer;
 var
   H: THandle;
   Func: TCardAuthorize9;
@@ -284,7 +288,7 @@ begin
   try
     @Func := GetProcAddress(H, Pchar('_card_authorize9'));
 
-    Result    := Func(Pchar(''), @FAuthAnswer9);
+    Result    := Func(nil, @FAuthAnswer9);
     FCheque   := PAnsiChar(FAuthAnswer9.AuthAnswer.Check);
     FRCode    := AnsiString(FAuthAnswer9.AuthAnswer.Rcode);
     FMessage  := AnsiString(FAuthAnswer9.AuthAnswer.AMessage);
@@ -361,6 +365,7 @@ begin
   inherited create;
   FAuthAnswer.Amount := 0;
   FAuthAnswer.TType  := 0;
+  FAuthAnswer.CType  := 0;
 end;
 
 destructor TPinPad.destroy;
@@ -425,6 +430,28 @@ begin
     FreeLibrary(H);
   end;
 
+end;
+
+function TPinPad.ServiceMenu: integer;
+var
+  H: Thandle;
+  Func: TServiceMenu;
+begin
+  H := LoadLibrary(PChar(LibName));
+
+  if H <= 0 then
+    begin
+      raise Exception.Create(Format('Не могу загрузить %s', [LibName]));
+      Exit;
+    end;
+
+  try
+    @Func := GetProcAddress(H, PChar('_ServiceMenu'));
+    Result := Func();
+  finally
+    Func := nil;
+    FreeLibrary(H);
+  end;
 end;
 
 function TPinPad.SuspendTrx: integer;
