@@ -1,5 +1,32 @@
 unit Core.PinPadOLE;
 
+{
+  Краткое описание функций
+  Функция  SРaram
+  Функция  SParam  (Name, Value) предназначена для задания входных параметров.
+  Name - имя входного параметра.
+  Value - значение входного параметра.
+  Возвращает S_OK при удачной реализации.
+  Функция  GРaramString
+  Функция  GParamString(Name, Value)  предназначена для получения выходных параметров.
+  Name - имя выходных параметра.
+  Value - значение выходного параметра.
+  Можно вызывать 2 способами:
+  1.	GParamString(Name, Value)
+  2.	Value =GParamString(Name)
+
+  Возвращает значение параметра с именем Name.
+
+  Функция  NFun
+  Функция  NFun(func) предназначена для запуска определенной функции в библиотеке (после того как необходимые входные параметры будут заданы).
+  Параметр func задает номер вызываемой функции. Подробное описание номеров функций библиотеки приводится в Приложении.
+  Возвращает код ошибки. 0 – успешное выполнение, любое другое – ошибка.
+
+  Функция  Clear
+  Функция  Clear()  предназначена очистки списка параметров.
+  Возвращает S_OK при удачной реализации.
+}
+
 interface
 
 uses ActiveX, Windows, SysUtils, ComObj, Classes, Variants;
@@ -10,8 +37,8 @@ const
 type
   TSberFunc = (fnSuspendTran = 6003, fnCommitTran = 6001, fnRollbackTran = 6004,
     fnPayInfo = 7005, fnCardAuth = 4000, fnReturn = 4002, fnAnnulate = 4003,
-    fnTestPinPad = 13, fnSberShift = 6000, fnSberXReport = 6002,
-    fnSberShiftAll = 7000, fnReadTrack2 = 5002);
+    fnTestPinPad = 13, fnSberCloseDay = 6000, fnSberXReport = 6002,
+    fnSberShiftAll = 7000, fnReadTrack2 = 5002, fnServiceMenu = 10);
 
   TPinPadOLE = class
     strict private
@@ -37,6 +64,7 @@ type
       function CloseDay: integer;
       function Return(Amount: Double): integer;
       function ReadTrack2: string;
+      function ServiceMenu: integer;
     published
       property PayInfo: string read FPayInfo write FPayInfo;
       property Cheque: string read FCheque;
@@ -86,7 +114,7 @@ end;
 function TPinPadOLE.CloseDay: integer;
 begin
   Clear;
-  Result  := NFun(fnSberXReport);
+  Result  := NFun(fnSberCloseDay);
   FCheque := GParamString('Cheque');
 end;
 
@@ -170,6 +198,11 @@ begin
   FCheque := GParamString('Cheque');
 end;
 
+function TPinPadOLE.ServiceMenu: integer;
+begin
+  Result := NFun(fnServiceMenu);
+end;
+
 function TPinPadOLE.SParam(name, Value: string): integer;
 begin
   Result := FPinPad.SParam(name, Value);
@@ -184,7 +217,6 @@ end;
 
 function TPinPadOLE.TestPinPad: boolean;
 begin
-  Clear;
   Result := NFun(fnTestPinPad) = 0;
 end;
 
